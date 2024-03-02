@@ -38,10 +38,10 @@ void Ball::move(Paddle left_paddle, Paddle right_paddle){
         _y_vel *= -1;  // Reverse the y-velocity
     }
 
-    if (-1 < _x && _x < _screen_width && -1 < _y && _y < _screen_height){
-        _x += _x_vel;
-        _y += _y_vel;
-    }
+    
+    _x += _x_vel;
+    _y += _y_vel;
+    
 }
 
 /**

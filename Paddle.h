@@ -16,7 +16,7 @@ class Paddle{
 
 
     private:
-        const int _VEL = 1;
+        const int _VEL = 1.2;
         int _original_x;
         int _original_y;
         int _screen_height;
