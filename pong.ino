@@ -3,6 +3,7 @@
 #include "JoyStick.h"
 #include "Ball.h"
 #include "Paddle.h"
+#include "numbers.h"
 
 ArduinoLEDMatrix matrix;
 
@@ -35,7 +36,7 @@ int right_player_score = 0;
 bool invert_left_joystick = true;
 bool invert_right_joystick = false;
 
-int time_to_show_score = 500;  // The time in milliseconds to show the score
+int time_to_show_score = 250;  // The time in milliseconds to show the score
 bool is_left_pressed = false;
 long left_press_millis = millis();
 bool is_right_pressed = false;
@@ -115,8 +116,10 @@ void loop() {
                 last_mode_change_millis = current_millis;
             }
         }
+        draw_game();
 
     }else if (current_mode == "score"){
+        show_score(left_player_score, right_player_score);
         if (left_joystick.get_SW() && right_joystick.get_SW() && current_millis - mode_change_delay >= last_mode_change_millis){
             current_mode = "game";
             left_press_millis = current_millis;
@@ -124,10 +127,10 @@ void loop() {
             is_left_pressed = false;
             is_right_pressed = false;
             last_mode_change_millis = millis();
+            draw_game();
+            delay(1000);
         }
     }
-
-    draw();
 }
 
 void reset(){
@@ -136,7 +139,9 @@ void reset(){
     ball.reset();
 }
 
-void draw(){
+void draw_game(){
+
+    
     byte on_screen[8][12] = {
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -148,18 +153,107 @@ void draw(){
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     };
 
-    if (current_mode == "game"){
-
-        for (int i = left_paddle._y; i < left_paddle._y + left_paddle._PADDLE_HEIGHT; i++){
-            on_screen[i][left_paddle._x] = 1;
-        }
-        for (int i = right_paddle._y; i < right_paddle._y + right_paddle._PADDLE_HEIGHT; i++){
-            on_screen[i][right_paddle._x] = 1;
-        }
-        on_screen[int (ball._y)][int (ball._x)] = 1;
-
+    for (int i = left_paddle._y; i < left_paddle._y + left_paddle._PADDLE_HEIGHT; i++){
+        on_screen[i][left_paddle._x] = 1;
     }
+    for (int i = right_paddle._y; i < right_paddle._y + right_paddle._PADDLE_HEIGHT; i++){
+        on_screen[i][right_paddle._x] = 1;
+    }
+    on_screen[int (ball._y)][int (ball._x)] = 1;
 
     matrix.renderBitmap(on_screen, SCREEN_HEIGHT, SCREEN_WIDTH);
+}
+
+
+
+
+byte score_on_screen[8][12] = {
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
+
+
+
+void show_score(int left_score, int right_score){
+    
+    for (int y = 0; y < 8; y++){
+      for (int x = 0; x < 12; x++){
+        score_on_screen[y][x] = 0;
+      }
+    }
+
+    get_right_number(right_score);
+    get_left_number(left_score);
+    matrix.renderBitmap(score_on_screen, SCREEN_HEIGHT, SCREEN_WIDTH);
+
+}
+
+
+void get_right_number(int number){
+    int num1 = int(number) / 10;
+    int num2 = int(number) % 10;
+    int num1_start_x = 5;
+    int num1_start_y = 7;
+
+    int num2_start_x = 0;
+    int num2_start_y = 7;
+    // First number
+    for (int screen_y = num1_start_y, number_y = num1*5; screen_y < num1_start_y+5; screen_y++, number_y++){
+        for (int screen_x = num1_start_x, number_x = 0; screen_x < num1_start_x+3; screen_x++, number_x++){
+            score_on_screen[screen_x][screen_y] = numbers[number_x][number_y];
+        }
+    }
+    // Second number
+    for (int screen_y = num2_start_y, number_y = num2*5; screen_y < num2_start_y+5; screen_y++, number_y++){
+        for (int screen_x = num2_start_x, number_x = 0; screen_x < num2_start_x+3; screen_x++, number_x++){
+            score_on_screen[screen_x][screen_y] = numbers[number_x][number_y];
+        }
+    }
+}
+
+byte rotated_numbers[3][50] = {};// Rotate the numbers array 180 degrees
+
+    
+void get_left_number(int number){
+    int num1 = int(number) / 10;
+    int num2 = int(number) % 10;
+    int num1_start_x = 0;
+    int num1_start_y = 0;
+
+    int num2_start_x = 5;
+    int num2_start_y = 0;
+
+    // Rotate the numbers array 180 degrees
+    for (int original_x = 0, rotated_x = 49; original_x < 50; original_x++, rotated_x--){
+        for (int original_y = 0, rotated_y = 2; original_y < 3; original_y++, rotated_y--){
+            rotated_numbers[rotated_y][rotated_x] = numbers[original_y][original_x];
+        }
+    }
+
+    // First number
+    for (int screen_y = num1_start_y, number_y = (9-num1)*5; screen_y < num1_start_y+5; screen_y++, number_y++){
+        for (int screen_x = num1_start_x, number_x = 0; screen_x < num1_start_x+3; screen_x++, number_x++){
+            score_on_screen[screen_x][screen_y] = rotated_numbers[number_x][number_y];
+        }
+    }
+
+    // Second number
+    for (int screen_y = num2_start_y, number_y = (9-num2)*5; screen_y < num2_start_y+5; screen_y++, number_y++){
+        for (int screen_x = num2_start_x, number_x = 0; screen_x < num2_start_x+3; screen_x++, number_x++){
+            score_on_screen[screen_x][screen_y] = rotated_numbers[number_x][number_y];
+        }
+    }
+    
+
+    
+  
+
 
 }
