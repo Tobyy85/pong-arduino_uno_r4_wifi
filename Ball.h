@@ -13,14 +13,14 @@ class Ball{
         
         float _x;
         float _y;
+        float _x_vel;
+        float _y_vel;
 
 
     private:
         const float _MAX_VEL = 1;
         float _original_x;
         float _original_y;
-        float _x_vel;
-        float _y_vel;
         int _screen_width;
         int _screen_height;
 };
