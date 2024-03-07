@@ -1,16 +1,16 @@
 #include "AI.h"
 
-AI::AI(int screen_width, int screen_height){
-    _screen_width = screen_width;
-    _screen_height = screen_height;
+AI::AI(Paddle& paddle, Ball& ball, int screen_width, int screen_height)
+    : _paddle(paddle), _ball(ball), _screen_width(screen_width), _screen_height(screen_height)
+{
 }
 
-String AI::where_to_move(int paddle_y, int paddle_height, float ball_y){
-    float paddle_middle = paddle_y + paddle_height / 2.0 - 0.5;  // The middle of the paddle
-    if (ball_y < paddle_middle){  // If the ball is above the middle of the paddle
-        return "UP";
-    }else if (ball_y > paddle_middle){  // If the ball is below the middle of the paddle
-        return "DOWN";
+void AI::move(){
+    float mid_of_paddle = _paddle._y + _paddle._PADDLE_HEIGHT/2 - 0.5;
+    if (_ball._y > mid_of_paddle){
+        _paddle.move("DOWN");
     }
-    
+    else if (_ball._y < mid_of_paddle){
+        _paddle.move("UP");
+    }
 }

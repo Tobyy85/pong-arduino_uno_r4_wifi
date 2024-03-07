@@ -21,7 +21,7 @@ long current_millis = millis();
 const int ball_speed = 10;
 long ball_last_millis = millis();
 
-const float paddle_speed = ball_speed/(PADDLE_HEIGHT/1.5); // /1.5
+const float paddle_speed = ball_speed/(PADDLE_HEIGHT/1.5);
 long left_paddle_last_millis = millis();
 long right_paddle_last_millis = millis();
 
@@ -30,8 +30,8 @@ Paddle right_paddle(SCREEN_WIDTH -1 , SCREEN_HEIGHT/2 - PADDLE_HEIGHT/2, SCREEN_
 Paddle left_paddle(0, SCREEN_HEIGHT/2 - PADDLE_HEIGHT/2, SCREEN_HEIGHT, PADDLE_HEIGHT);
 Ball ball(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-AI left_paddle_ai = AI(SCREEN_WIDTH, SCREEN_HEIGHT);
-AI right_paddle_ai = AI(SCREEN_WIDTH, SCREEN_HEIGHT);
+AI left_paddle_ai = AI(left_paddle, ball, SCREEN_WIDTH, SCREEN_HEIGHT);
+AI right_paddle_ai = AI(right_paddle, ball, SCREEN_WIDTH, SCREEN_HEIGHT);
 bool is_left_ai = true;
 bool is_right_ai = false;
 
@@ -58,7 +58,6 @@ void setup() {
 
 void loop() {
     current_millis = millis();
-
     if (current_mode == "game"){
 
         if (current_millis >= ball_last_millis + 1000 / ball_speed){  // If the ball should move
@@ -76,9 +75,7 @@ void loop() {
         if (current_millis >= left_paddle_last_millis + 1000 / paddle_speed){  // If the left paddle should move
             left_paddle_last_millis = current_millis;
             if (is_left_ai){
-                String where_to_move = left_paddle_ai.where_to_move(left_paddle._y, left_paddle._PADDLE_HEIGHT, ball._y);
-                left_paddle.move(where_to_move);
-            }else{
+                left_paddle_ai.move();
                 if (invert_left_joystick){
                     String direction = left_joystick.get_direction();
                     if (direction == "UP"){
@@ -94,8 +91,7 @@ void loop() {
         if (current_millis >= right_paddle_last_millis + 1000 / paddle_speed){  // If the right paddle should move
             right_paddle_last_millis = current_millis;
             if (is_right_ai){
-                String where_to_move = right_paddle_ai.where_to_move(right_paddle._y, right_paddle._PADDLE_HEIGHT, ball._y);
-                right_paddle.move(where_to_move);
+                right_paddle_ai.move();
             }else{
                 if (invert_right_joystick){
                     String direction = right_joystick.get_direction();

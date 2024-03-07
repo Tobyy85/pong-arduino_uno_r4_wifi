@@ -3,27 +3,19 @@
 
 #include "Arduino.h"
 #include "Ball.h"
-// Paddle.h is not included here because it is included in Ball.h
+// Paddle.h is not included here because it is included in Ball.h already
 
-
-class AI{
+class AI {
     public:
-        AI(int screen_width, int screen_height);
-        String where_to_move(int paddle_y, int paddle_height, float ball_y);
-        
-
+        AI(Paddle& paddle, Ball& ball, int screen_width, int screen_height);
+        void move();
 
     private:
+        Paddle& _paddle;
+        Ball& _ball;
         int _screen_width;
         int _screen_height;
-
-        
 };
-
-
-
-
-
 
 
 
