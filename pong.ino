@@ -148,6 +148,35 @@ void reset(){
     left_paddle.reset();
     right_paddle.reset();
     ball.reset();
+    int time = 1500; // ms
+
+    // int count = 2;
+    // for (int i = 0; i < count; i++){
+    //     show_score(left_player_score, right_player_score);
+    //     delay((time/count)/2);
+    //     draw_clear_screen();
+    //     delay((time/count)/2);
+    // }
+
+    delay(time/9*4);
+    draw_clear_screen();
+    delay(time/9*0.5);
+    draw_game();
+    delay(time/9*4.5);
+}
+
+void draw_clear_screen(){
+    byte clear_screen[8][12] = {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+    };
+    matrix.renderBitmap(clear_screen, SCREEN_HEIGHT, SCREEN_WIDTH);
 }
 
 void draw_game(){
