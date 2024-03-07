@@ -3,6 +3,7 @@
 #include "JoyStick.h"
 #include "Ball.h"
 #include "Paddle.h"
+#include "AI.h"
 #include "numbers.h"
 
 ArduinoLEDMatrix matrix;
@@ -20,7 +21,7 @@ long current_millis = millis();
 const int ball_speed = 10;
 long ball_last_millis = millis();
 
-const int paddle_speed = 2*ball_speed;
+const float paddle_speed = ball_speed/(PADDLE_HEIGHT/1.5); // /1.5
 long left_paddle_last_millis = millis();
 long right_paddle_last_millis = millis();
 
@@ -28,6 +29,11 @@ long right_paddle_last_millis = millis();
 Paddle right_paddle(SCREEN_WIDTH -1 , SCREEN_HEIGHT/2 - PADDLE_HEIGHT/2, SCREEN_HEIGHT, PADDLE_HEIGHT);
 Paddle left_paddle(0, SCREEN_HEIGHT/2 - PADDLE_HEIGHT/2, SCREEN_HEIGHT, PADDLE_HEIGHT);
 Ball ball(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+AI left_paddle_ai = AI(SCREEN_WIDTH, SCREEN_HEIGHT);
+AI right_paddle_ai = AI(SCREEN_WIDTH, SCREEN_HEIGHT);
+bool is_left_ai = true;
+bool is_right_ai = false;
 
 JoyStick left_joystick(A2, A1, A0, 509, 509, 5, 5);
 JoyStick right_joystick(A3, A4, A5, 508, 492, 5, 5);
@@ -69,31 +75,40 @@ void loop() {
         }
         if (current_millis >= left_paddle_last_millis + 1000 / paddle_speed){  // If the left paddle should move
             left_paddle_last_millis = current_millis;
-            if (invert_left_joystick){
-                String direction = left_joystick.get_direction();
-                if (direction == "UP"){
-                    left_paddle.move("DOWN");
-                }else if (direction == "DOWN"){
-                    left_paddle.move("UP");
-                }
+            if (is_left_ai){
+                String where_to_move = left_paddle_ai.where_to_move(left_paddle._y, left_paddle._PADDLE_HEIGHT, ball._y);
+                left_paddle.move(where_to_move);
             }else{
-                left_paddle.move(left_joystick.get_direction());
+                if (invert_left_joystick){
+                    String direction = left_joystick.get_direction();
+                    if (direction == "UP"){
+                        left_paddle.move("DOWN");
+                    }else if (direction == "DOWN"){
+                        left_paddle.move("UP");
+                    }
+                }else{
+                    left_paddle.move(left_joystick.get_direction());
+                }
             }
         }
         if (current_millis >= right_paddle_last_millis + 1000 / paddle_speed){  // If the right paddle should move
             right_paddle_last_millis = current_millis;
-            if (invert_right_joystick){
-                String direction = right_joystick.get_direction();
-                if (direction == "UP"){
-                    right_paddle.move("DOWN");
-                }else if (direction == "DOWN"){
-                    right_paddle.move("UP");
-                }
+            if (is_right_ai){
+                String where_to_move = right_paddle_ai.where_to_move(right_paddle._y, right_paddle._PADDLE_HEIGHT, ball._y);
+                right_paddle.move(where_to_move);
             }else{
-                right_paddle.move(right_joystick.get_direction());
+                if (invert_right_joystick){
+                    String direction = right_joystick.get_direction();
+                    if (direction == "UP"){
+                        right_paddle.move("DOWN");
+                    }else if (direction == "DOWN"){
+                        right_paddle.move("UP");
+                    }
+                }else{
+                    right_paddle.move(right_joystick.get_direction());
+                }
             }
         }
-        
         if (left_joystick.get_SW()){
             if (!is_left_pressed){
                 is_left_pressed = true;

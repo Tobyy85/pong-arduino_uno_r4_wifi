@@ -8,15 +8,12 @@
 
 class AI{
     public:
-        AI(Paddle paddle, Ball ball, int screen_width, int screen_height);
-        void move();
+        AI(int screen_width, int screen_height);
+        String where_to_move(int paddle_y, int paddle_height, float ball_y);
         
 
 
     private:
-        bool should_move();
-        Paddle _paddle;
-        Ball _ball;
         int _screen_width;
         int _screen_height;
 
