@@ -15,6 +15,8 @@ class AI {
         Ball& _ball;
         int _screen_width;
         int _screen_height;
+        int last_y_pos_of_paddle;
+        float last_y_pos_of_ball;
 };
 
 

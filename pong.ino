@@ -49,12 +49,11 @@ bool is_right_pressed = false;
 long right_press_millis = millis();
 
 
-
-
 void setup() {
     matrix.begin();
     Serial.begin(9600);
 }
+
 
 void loop() {
     current_millis = millis();
@@ -76,6 +75,7 @@ void loop() {
             left_paddle_last_millis = current_millis;
             if (is_left_ai){
                 left_paddle_ai.move();
+            }else{
                 if (invert_left_joystick){
                     String direction = left_joystick.get_direction();
                     if (direction == "UP"){
@@ -144,6 +144,7 @@ void loop() {
     }
 }
 
+
 void reset(){
     left_paddle.reset();
     right_paddle.reset();
@@ -165,6 +166,7 @@ void reset(){
     delay(time/9*4.5);
 }
 
+
 void draw_clear_screen(){
     byte clear_screen[8][12] = {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
@@ -179,9 +181,8 @@ void draw_clear_screen(){
     matrix.renderBitmap(clear_screen, SCREEN_HEIGHT, SCREEN_WIDTH);
 }
 
-void draw_game(){
 
-    
+void draw_game(){
     byte on_screen[8][12] = {
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -205,8 +206,6 @@ void draw_game(){
 }
 
 
-
-
 byte score_on_screen[8][12] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -217,9 +216,6 @@ byte score_on_screen[8][12] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
-
-
-
 
 void show_score(int left_score, int right_score){
     
@@ -258,9 +254,9 @@ void get_right_number(int number){
     }
 }
 
-byte rotated_numbers[3][50] = {};// Rotate the numbers array 180 degrees
 
-    
+byte rotated_numbers[3][50] = {};// Rotate the numbers array 180 degrees
+ 
 void get_left_number(int number){
     int num1 = int(number) / 10;
     int num2 = int(number) % 10;
@@ -290,10 +286,4 @@ void get_left_number(int number){
             score_on_screen[screen_x][screen_y] = rotated_numbers[number_x][number_y];
         }
     }
-    
-
-    
-  
-
-
 }
